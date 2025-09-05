@@ -1,0 +1,9 @@
+@Library('jenkins-custom-libraries_v2') _
+
+projectName = 'external-ordering-service'
+
+//see https://git.loyaltyplant.com/devops/jenkins-custom-library/blob/master/vars/buildService.groovy
+buildService {
+    projectName = this.projectName
+    javaBuildVersion = 21
+}

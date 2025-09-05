@@ -1,0 +1,6 @@
+@Library('jenkins-custom-libraries_v2') _
+
+//https://git.loyaltyplant.com/devops/jenkins-custom-library/blob/master/vars/mergeRequest.groovy
+mergeRequest {
+    javaBuildVersion = 21
+}
