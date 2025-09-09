@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <swagger.version>2.9.2</swagger.version>
+        <swagger.version>2.6.0</swagger.version>
         <IntegrationCommon.version>1.5.36</IntegrationCommon.version>
         <dockerfile.skip>false</dockerfile.skip>
         <dockerfile.imagename>external-ordering-service</dockerfile.imagename>
@@ -45,6 +45,23 @@
             <groupId>com.loyaltyplant.server.commons</groupId>
             <artifactId>lpcommons-vault</artifactId>
             <version>${lpserver.commons.version}</version>
+        </dependency>
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${swagger.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-autoconfigure</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Database -->
@@ -199,6 +216,14 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>9.0.1</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>
