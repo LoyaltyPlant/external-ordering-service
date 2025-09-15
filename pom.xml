@@ -3,23 +3,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>external-ordering-service</artifactId>
-    <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+
     <parent>
         <groupId>com.loyaltyplant.server.services</groupId>
         <artifactId>ms-parent-pom</artifactId>
         <version>2.1.40</version>
     </parent>
 
+    <!-- Example of naming artifactId, replace with your own,
+         for example "external-ordering-service" -->
+    <!-- Remember to change the package name in com.loyaltyplant.server.services.externalordering to your own package! -->
+    <!-- Also replace the name in LiquibaseConfiguration, in migration resources, in application.properties and in the GIT version template -->
+    <artifactId>external-ordering-service</artifactId>
+    <packaging>jar</packaging>
+    <!-- Version will be incremented automatically by our Jenkins release pipeline -->
+    <version>0.0.1-SNAPSHOT</version>
+
     <properties>
         <swagger.version>2.6.0</swagger.version>
-        <IntegrationCommon.version>1.5.36</IntegrationCommon.version>
+        <git.commit.id.version>9.0.1</git.commit.id.version>
+        <IntegrationCommon.version>1.6.10</IntegrationCommon.version>
         <dockerfile.skip>false</dockerfile.skip>
         <dockerfile.imagename>external-ordering-service</dockerfile.imagename>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
+
         <!-- lpserver-commons -->
         <dependency>
             <groupId>com.loyaltyplant.server.commons</groupId>
@@ -46,6 +58,22 @@
             <artifactId>lpcommons-vault</artifactId>
             <version>${lpserver.commons.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.loyaltyplant.server.commons</groupId>
+            <artifactId>lpcommons-db-datasource</artifactId>
+            <version>${lpserver.commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.loyaltyplant.server.commons</groupId>
+            <artifactId>lpcommons-db-migration</artifactId>
+            <version>${lpserver.commons.version}</version>
+        </dependency>
 
         <!-- Swagger -->
         <dependency>
@@ -66,27 +94,6 @@
 
         <!-- Database -->
         <dependency>
-            <groupId>com.loyaltyplant.server.commons</groupId>
-            <artifactId>lpcommons-db-datasource</artifactId>
-            <version>${lpserver.commons.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.loyaltyplant.server.commons</groupId>
-            <artifactId>lpcommons-db-migration</artifactId>
-            <version>${lpserver.commons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.loyaltyplant.common</groupId>
-            <artifactId>IntegrationCommon</artifactId>
-            <version>${IntegrationCommon.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.loyaltyplant.oss</groupId>
             <artifactId>plantsql-core</artifactId>
             <version>${plantsql.version}</version>
@@ -101,6 +108,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -112,20 +120,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Integration models & DTOs -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-driver.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
+            <groupId>com.loyaltyplant.common</groupId>
+            <artifactId>IntegrationCommon</artifactId>
+            <version>${IntegrationCommon.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Jackson -->
@@ -140,6 +146,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -149,6 +156,25 @@
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-appserver</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Swagger -->
@@ -202,31 +228,36 @@
             <version>${lombok.version}</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
             <!-- VersionInfo generation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
-                <version>9.0.1</version>
+                <version>${git.commit.id.version}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
     <repositories>
         <!--OUR NEXUS REPO-->
         <repository>
@@ -239,7 +270,13 @@
             <name>Internal Snapshots</name>
             <url>https://nexus.loyaltyplant.com/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>loyaltyplant-repo-3rd</id>
+            <name>Internal 3rd party</name>
+            <url>https://nexus.loyaltyplant.com/content/repositories/thirdparty/</url>
+        </repository>
     </repositories>
+
     <scm>
         <url>https://git.loyaltyplant.com/server/external-ordering-service</url>
         <connection>scm:git:ssh://git@git.loyaltyplant.com:2222/server/external-ordering-service.git</connection>
