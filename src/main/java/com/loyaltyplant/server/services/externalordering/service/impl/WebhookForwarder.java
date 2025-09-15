@@ -6,6 +6,7 @@ import com.loyaltyplant.server.services.externalordering.service.ITokenValidatio
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
     private final String lpWebhookUrl;
 
     @Autowired
-    public WebhookForwarder(final RestTemplate restTemplate,
+    public WebhookForwarder(final @Qualifier("webhookRestTemplate") RestTemplate restTemplate,
                             final ITokenValidationService tokenValidationService,
                             final @Value("${lp.webhook.url}") String lpWebhookUrl) {
         this.restTemplate = restTemplate;
@@ -43,13 +44,19 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
         headers.add(AUTH_TOKEN_HEADER, tokenValidationService.getResponseToken(salesOutletId));
 
         final HttpEntity<OrdersWebhookRequest> entity = new HttpEntity<>(request, headers);
-        final ResponseEntity<Void> response = restTemplate.exchange(lpWebhookUrl, HttpMethod.POST, entity, Void.class);
 
-        if (response.getStatusCode() != HttpStatus.OK) {
-            LOGGER.error("Failed to forward webhook to LP");
+        try {
+            final ResponseEntity<Void> response = restTemplate.exchange(lpWebhookUrl, HttpMethod.POST, entity, Void.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                LOGGER.error("Failed to forward webhook to LP");
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to forward webhook to LP", e);
             return false;
-        } else {
-            return true;
         }
     }
 }

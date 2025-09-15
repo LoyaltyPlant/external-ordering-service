@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * 3. The 'lpcommons-db-migration' dependency from the POM file
  * 4. Any other database-related configurations and dependencies
  */
-//@Configuration
+@Configuration
 @Import({
         PostgresDatabaseConfiguration.class,
         LiquibaseConfiguration.class

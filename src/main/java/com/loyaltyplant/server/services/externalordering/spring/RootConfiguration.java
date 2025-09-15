@@ -9,9 +9,15 @@ import com.loyaltyplant.server.services.externalordering.spring.database.Databas
 
 
 import org.springframework.context.annotation.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.time.Duration;
+
+import static com.loyaltyplant.server.services.externalordering.utils.Consts.WEBHOOK_TO_LP_CONNECT_TIMEOUT_SECONDS;
+import static com.loyaltyplant.server.services.externalordering.utils.Consts.WEBHOOK_TO_LP_REQUEST_READ_TIMEOUT_SECONDS;
 
 @Configuration
 @Import({
@@ -19,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         LoggingConfiguration.class,
         DefaultSpringPropertiesConfiguration.class,
         ConsulConfiguration.class,
+        MicrometerMetrics.class,
         CommonController.class
 })
 @ComponentScans({
@@ -38,8 +45,12 @@ public class RootConfiguration {
         return new ObjectMapper();
     }
 
-    @Bean
+    @Bean("webhookRestTemplate")
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        var factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(WEBHOOK_TO_LP_CONNECT_TIMEOUT_SECONDS));
+        factory.setReadTimeout(Duration.ofSeconds(WEBHOOK_TO_LP_REQUEST_READ_TIMEOUT_SECONDS));
+        return new RestTemplate(factory);
+
     }
 }

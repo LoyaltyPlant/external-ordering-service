@@ -121,6 +121,13 @@
             </exclusions>
         </dependency>
 
+        <!-- Monitoring -->
+        <dependency>
+            <groupId>com.loyaltyplant.server.commons</groupId>
+            <artifactId>micrometer-metrics</artifactId>
+            <version>${lpserver.commons.version}</version>
+        </dependency>
+
         <!-- Integration models & DTOs -->
         <dependency>
             <groupId>com.loyaltyplant.common</groupId>
