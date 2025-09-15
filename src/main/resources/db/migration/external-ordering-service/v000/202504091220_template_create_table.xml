@@ -9,7 +9,7 @@
     <changeSet id="2025090401" author="akropotov">
         <comment>Create orders table</comment>
         <createTable tableName="orders">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="external_id" type="VARCHAR(255)">

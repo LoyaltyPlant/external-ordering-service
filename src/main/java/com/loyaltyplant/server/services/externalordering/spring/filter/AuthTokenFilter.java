@@ -32,7 +32,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     final @NotNull HttpServletResponse response,
                                     final @NotNull FilterChain filterChain) throws ServletException, IOException {
         final String path = request.getRequestURI();
-        if (path.contains("swagger") || path.contains("api-docs")) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || !path.startsWith("/api") || path.contains("api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }

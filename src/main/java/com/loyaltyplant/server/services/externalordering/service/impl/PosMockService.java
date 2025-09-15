@@ -26,6 +26,7 @@ import java.util.*;
 public class PosMockService implements IExternalPosConvertingService {
 
     @Override
+    @NotNull
     public Optional<HealthcheckResponse> healthcheck(final @NotNull Integer salesOutletId) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
 
@@ -39,6 +40,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
+    @NotNull
     public Optional<GetPosOrdersResponse> getOrders(final @NotNull Integer salesOutletId, final @NotNull GetPosOrdersRequest request) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
         Objects.requireNonNull(request, "request is required");
@@ -65,13 +67,20 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
+    @NotNull
     public Optional<CreatePosOrderResponse> createOrder(final @NotNull Integer salesOutletId, final @NotNull CreatePosOrderRequest request) {
+        Objects.requireNonNull(salesOutletId, "salesOutletId is required");
+        Objects.requireNonNull(request, "request is required");
+
         final String generatedPosId = "POS-" + UUID.randomUUID();
         return Optional.of(new CreatePosOrderResponse(generatedPosId));
     }
 
     @Override
+    @NotNull
     public Optional<MenuAggregatorV2> getMenu(final @NotNull Integer salesOutletId) {
+        Objects.requireNonNull(salesOutletId, "salesOutletId is required");
+
         final IntegrationCategoryV2 iceCream500 = IntegrationCategoryV2.builder()
                 .id("2029171")
                 .code("2029171")
@@ -224,6 +233,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
+    @NotNull
     public Optional<OrdersWebhookRequest> webhook(final @NotNull PosVendorWebhookRequest src) {
         Objects.requireNonNull(src, "webhook body is required");
 

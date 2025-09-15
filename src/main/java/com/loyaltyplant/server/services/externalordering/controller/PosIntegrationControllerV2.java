@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,7 +60,7 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing authentication"),
             @ApiResponse(responseCode = "503", description = "Service is unavailable")
     })
-    public ResponseEntity<HealthcheckResponse> healthcheck(@RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId) {
+    public ResponseEntity<HealthcheckResponse> healthcheck(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId) {
         final Optional<HealthcheckResponse> status = convertingService.healthcheck(salesOutletId);
         return status.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
@@ -75,7 +76,7 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "503", description = "Service temporarily unavailable")
     })
     public ResponseEntity<GetPosOrdersResponse> getOrders(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId,
-                                                          final @RequestBody GetPosOrdersRequest request) {
+                                                          final @Valid @RequestBody GetPosOrdersRequest request) {
         final Optional<GetPosOrdersResponse> orders = convertingService.getOrders(salesOutletId, request);
         return orders.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
@@ -91,7 +92,7 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "503", description = "Service temporarily unavailable")
     })
     public ResponseEntity<CreatePosOrderResponse> createOrder(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId,
-                                                              final @RequestBody CreatePosOrderRequest request) {
+                                                              final @Valid @RequestBody CreatePosOrderRequest request) {
         final Optional<CreatePosOrderResponse> order = convertingService.createOrder(salesOutletId, request);
 
         if (order.isEmpty()) {
@@ -112,7 +113,7 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing authentication"),
             @ApiResponse(responseCode = "503", description = "Service temporarily unavailable")
     })
-    public ResponseEntity<MenuAggregatorV2> getMenu(@RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId) {
+    public ResponseEntity<MenuAggregatorV2> getMenu(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId) {
         final Optional<MenuAggregatorV2> menu = convertingService.getMenu(salesOutletId);
         return menu.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
@@ -127,8 +128,8 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing authentication"),
             @ApiResponse(responseCode = "503", description = "Service temporarily unavailable")
     })
-    public ResponseEntity<Void> orderStatusWebhookFromPos(@RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId,
-                                                          @RequestBody PosVendorWebhookRequest vendorRequest) {
+    public ResponseEntity<Void> orderStatusWebhookFromPos(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId,
+                                                          final @Valid @RequestBody PosVendorWebhookRequest vendorRequest) {
         final Optional<OrdersWebhookRequest> webhook = convertingService.webhook(vendorRequest);
 
         if (webhook.isEmpty()) {

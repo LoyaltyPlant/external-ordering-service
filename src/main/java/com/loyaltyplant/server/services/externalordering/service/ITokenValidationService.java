@@ -30,5 +30,5 @@ public interface ITokenValidationService {
      * @return A string representing the generated response token.
      * @throws NullPointerException if salesOutletId is null.
      */
-    String getResponseToken(@NotNull Integer salesOutletId);
+    @NotNull String getResponseToken(@NotNull Integer salesOutletId);
 }

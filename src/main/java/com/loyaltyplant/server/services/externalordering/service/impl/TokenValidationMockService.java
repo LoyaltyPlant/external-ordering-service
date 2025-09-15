@@ -12,6 +12,7 @@ public class TokenValidationMockService implements ITokenValidationService {
     }
 
     @Override
+    @NotNull
     public String getResponseToken(final @NotNull Integer salesOutletId) {
         return "responseToken";
     }

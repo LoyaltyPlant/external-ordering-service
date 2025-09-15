@@ -28,13 +28,13 @@ class PostgresDatabaseConfiguration extends DataSourceConfigurationSupport {
     }
 
     @Bean(name = {"pgDatasource", "liquibase.dataSource"})
-    public DataSource paymentDatasource(@Qualifier(BEAN_DS_SETTINGS_PG) final DataSourceProperties dsProps) {
+    public DataSource pgDatasource(@Qualifier(BEAN_DS_SETTINGS_PG) final DataSourceProperties dsProps) {
         return createPooledDataSource(DS_NAME, dsProps);
     }
 
     @Bean(name = "pgPersistence.transactionManager")
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public PlatformTransactionManager paymentPersistenceTransactionManager(@Qualifier("pgDatasource") final Optional<DataSource> dataSource) {
+    public PlatformTransactionManager pgPersistenceTransactionManager(@Qualifier("pgDatasource") final Optional<DataSource> dataSource) {
         return dataSource.map(DataSourceTransactionManager::new).orElse(null);
     }
 

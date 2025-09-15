@@ -10,11 +10,9 @@ import com.loyaltyplant.server.services.externalordering.service.impl.WebhookFor
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.client.RestTemplate;
 
 @TestConfiguration
-@ContextConfiguration
 public class TestsConfiguration {
     @Bean(value = {"psql"})
     public SQLTemplateFactory sqlTemplateFactory() {
@@ -32,7 +30,7 @@ public class TestsConfiguration {
     }
 
     @Bean
-    public IExternalWebhookForwarder externalWebhookForwarder(ITokenValidationService tokenValidationService) {
-        return new WebhookForwarder(null, tokenValidationService, "");
+    public IExternalWebhookForwarder externalWebhookForwarder(final ITokenValidationService tokenValidationService) {
+        return new WebhookForwarder(Mockito.mock(RestTemplate.class), tokenValidationService, "");
     }
 }

@@ -30,7 +30,7 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
                             final @Value("${lp.webhook.url}") String lpWebhookUrl) {
         this.restTemplate = restTemplate;
         this.tokenValidationService = tokenValidationService;
-        this.lpWebhookUrl = lpWebhookUrl;
+        this.lpWebhookUrl = Objects.requireNonNull(lpWebhookUrl, "lp.webhook.url is required");
     }
 
     @Override
@@ -40,8 +40,14 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(SALES_OUTLET_HEADER, String.valueOf(salesOutletId));
-        headers.add(AUTH_TOKEN_HEADER, tokenValidationService.getResponseToken(salesOutletId));
+        headers.set(SALES_OUTLET_HEADER, String.valueOf(salesOutletId));
+
+        final String responseToken = Objects.requireNonNull(
+                tokenValidationService.getResponseToken(salesOutletId),
+                "response token must not be null"
+        );
+        headers.set(AUTH_TOKEN_HEADER, responseToken);
+
 
         final HttpEntity<OrdersWebhookRequest> entity = new HttpEntity<>(request, headers);
 
