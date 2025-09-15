@@ -1,6 +1,7 @@
 package com.loyaltyplant.server.services.externalordering.spring.filter;
 
 import com.loyaltyplant.server.services.externalordering.service.ITokenValidationService;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +30,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request,
-                                    final @NotNull HttpServletResponse response,
-                                    final @NotNull FilterChain filterChain) throws ServletException, IOException {
+                                    final @Nonnull HttpServletResponse response,
+                                    final @Nonnull FilterChain filterChain) throws ServletException, IOException {
         final String path = request.getRequestURI();
         if ("OPTIONS".equalsIgnoreCase(request.getMethod()) || !path.startsWith("/api") || path.contains("api-docs")) {
             filterChain.doFilter(request, response);
@@ -63,7 +64,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isValid(final @NotNull Integer salesOutletId, final @NotNull String token) {
+    private boolean isValid(final @Nonnull Integer salesOutletId, final @Nonnull String token) {
         return tokenValidationService.isRequestTokenValid(salesOutletId, token);
     }
 }

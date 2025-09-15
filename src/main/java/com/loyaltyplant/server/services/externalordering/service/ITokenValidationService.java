@@ -1,6 +1,6 @@
 package com.loyaltyplant.server.services.externalordering.service;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Service interface for token validation and generation.
@@ -19,7 +19,7 @@ public interface ITokenValidationService {
      * @return true if the token is valid for the specified sales outlet, false otherwise.
      * @throws NullPointerException if either salesOutletId or token is null.
      */
-    boolean isRequestTokenValid(@NotNull Integer salesOutletId, @NotNull String token);
+    boolean isRequestTokenValid(@Nonnull Integer salesOutletId, @Nonnull String token);
 
     /**
      * Generates a response token for the given sales outlet.
@@ -30,5 +30,5 @@ public interface ITokenValidationService {
      * @return A string representing the generated response token.
      * @throws NullPointerException if salesOutletId is null.
      */
-    @NotNull String getResponseToken(@NotNull Integer salesOutletId);
+    @Nonnull String getResponseToken(@Nonnull Integer salesOutletId);
 }

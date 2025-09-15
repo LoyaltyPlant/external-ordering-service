@@ -1,7 +1,7 @@
 package com.loyaltyplant.server.services.externalordering.service;
 
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -30,5 +30,5 @@ public interface IVaultStorageService {
      *         The returned map may be empty if the secret exists but contains no data.
      * @throws NullPointerException if the provided path is null or empty.
      */
-    @Nullable Map<String, String> readKey(@NotNull String path);
+    @Nullable Map<String, String> readKey(@Nonnull String path);
 }

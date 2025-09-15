@@ -1,7 +1,7 @@
 package com.loyaltyplant.server.services.externalordering.service;
 
 import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.OrdersWebhookRequest;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 /**
  * Interface for forwarding webhook notifications from external systems to LP.
@@ -21,5 +21,5 @@ public interface IExternalWebhookForwarder {
      *         false if the forwarding failed or the external system returned an error response.
      * @throws NullPointerException if either salesOutletId or request is null.
      */
-    boolean forward(@NotNull Integer salesOutletId, @NotNull OrdersWebhookRequest request);
+    boolean forward(@Nonnull Integer salesOutletId, @Nonnull OrdersWebhookRequest request);
 }

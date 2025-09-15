@@ -18,7 +18,7 @@ import com.loyaltyplant.server.services.externalordering.service.IExternalPosCon
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -42,8 +42,7 @@ public class PosMockService implements IExternalPosConvertingService {
 
 
     @Override
-    @NotNull
-    public Optional<HealthcheckResponse> healthcheck(final @NotNull Integer salesOutletId) {
+    public @Nonnull Optional<HealthcheckResponse> healthcheck(final @Nonnull Integer salesOutletId) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
 
         final HealthcheckResponse resp = new HealthcheckResponse();
@@ -56,8 +55,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
-    @NotNull
-    public Optional<GetPosOrdersResponse> getOrders(final @NotNull Integer salesOutletId, final @NotNull GetPosOrdersRequest request) {
+    public @Nonnull Optional<GetPosOrdersResponse> getOrders(final @Nonnull Integer salesOutletId, final @Nonnull GetPosOrdersRequest request) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
         Objects.requireNonNull(request, "request is required");
 
@@ -83,8 +81,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
-    @NotNull
-    public Optional<CreatePosOrderResponse> createOrder(final @NotNull Integer salesOutletId, final @NotNull CreatePosOrderRequest request) {
+    public @Nonnull Optional<CreatePosOrderResponse> createOrder(final @Nonnull Integer salesOutletId, final @Nonnull CreatePosOrderRequest request) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
         Objects.requireNonNull(request, "request is required");
 
@@ -95,8 +92,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
-    @NotNull
-    public Optional<MenuAggregatorV2> getMenu(final @NotNull Integer salesOutletId) {
+    public @Nonnull Optional<MenuAggregatorV2> getMenu(final @Nonnull Integer salesOutletId) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
 
         final IntegrationCategoryV2 iceCream500 = IntegrationCategoryV2.builder()
@@ -251,8 +247,7 @@ public class PosMockService implements IExternalPosConvertingService {
     }
 
     @Override
-    @NotNull
-    public Optional<OrdersWebhookRequest> webhook(final @NotNull PosVendorWebhookRequest src) {
+    public @Nonnull Optional<OrdersWebhookRequest> webhook(final @Nonnull PosVendorWebhookRequest src) {
         Objects.requireNonNull(src, "webhook body is required");
 
         final OrdersWebhookRequest dst = new OrdersWebhookRequest();
@@ -280,8 +275,7 @@ public class PosMockService implements IExternalPosConvertingService {
         return Optional.of(dst);
     }
 
-    @NotNull
-    private Map<OrderingType, Price> priceAllTypes(final @NotNull BigDecimal price) {
+    private @Nonnull Map<OrderingType, Price> priceAllTypes(final @Nonnull BigDecimal price) {
         final PricedEntityV2 p = new PricedEntityV2();
         Arrays.stream(OrderingType.values()).forEach(
                 type -> p.addPriceByType(

@@ -3,7 +3,7 @@ package com.loyaltyplant.server.services.externalordering.service.impl;
 import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.OrdersWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.service.IExternalWebhookForwarder;
 import com.loyaltyplant.server.services.externalordering.service.ITokenValidationService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +34,7 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
     }
 
     @Override
-    public boolean forward(final @NotNull Integer salesOutletId, final @NotNull OrdersWebhookRequest request) {
+    public boolean forward(final @Nonnull Integer salesOutletId, final @Nonnull OrdersWebhookRequest request) {
         Objects.requireNonNull(salesOutletId, "salesOutletId is required");
         Objects.requireNonNull(request, "request is required");
 

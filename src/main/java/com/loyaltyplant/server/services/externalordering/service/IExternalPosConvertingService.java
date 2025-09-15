@@ -8,7 +8,7 @@ import com.loyaltyplant.common.integration.protocol.digitalordering.response.Get
 import com.loyaltyplant.common.integration.protocol.digitalordering.response.HealthcheckResponse;
 import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.OrdersWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.model.PosVendorWebhookRequest;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ public interface IExternalPosConvertingService {
      * @param salesOutletId - sales outlet ID
      * @return Optional of HealthcheckResponse with healthcheck data or empty if conversion failed
      */
-    @NotNull Optional<HealthcheckResponse> healthcheck(@NotNull Integer salesOutletId);
+    @Nonnull Optional<HealthcheckResponse> healthcheck(@Nonnull Integer salesOutletId);
 
     /**
      * This method converts external POS system orders data to LP Digital Ordering format.
@@ -29,7 +29,7 @@ public interface IExternalPosConvertingService {
      * @param request - GetPosOrdersRequest with orders data
      * @return Optional of GetPosOrdersResponse with orders data or empty if conversion failed
      */
-    @NotNull Optional<GetPosOrdersResponse> getOrders(@NotNull Integer salesOutletId, @NotNull GetPosOrdersRequest request);
+    @Nonnull Optional<GetPosOrdersResponse> getOrders(@Nonnull Integer salesOutletId, @Nonnull GetPosOrdersRequest request);
 
     /**
      * This method creates order in external POS system menu and returns response in LP Digital Ordering format.
@@ -37,19 +37,19 @@ public interface IExternalPosConvertingService {
      * @param request - CreatePosOrderRequest with order data
      * @return Optional of CreatePosOrderResponse with order data or empty if conversion failed
      */
-    @NotNull Optional<CreatePosOrderResponse> createOrder(@NotNull Integer salesOutletId, @NotNull CreatePosOrderRequest request);
+    @Nonnull Optional<CreatePosOrderResponse> createOrder(@Nonnull Integer salesOutletId, @Nonnull CreatePosOrderRequest request);
 
     /**
      * This method converts external POS system menu to LP Digital Ordering menu format.
      * @param salesOutletId - sales outlet ID
      * @return Optional of MenuAggregatorV2 with menu data or empty if conversion failed
      */
-    @NotNull Optional<MenuAggregatorV2> getMenu(@NotNull Integer salesOutletId);
+    @Nonnull Optional<MenuAggregatorV2> getMenu(@Nonnull Integer salesOutletId);
 
     /**
      * Converts a vendor-specific webhook payload into LP Digital Ordering webhook request.
      * @param vendorRequest vendor webhook payload
      * @return Optional with Digital Ordering webhook request or empty if conversion failed
      */
-    @NotNull Optional<OrdersWebhookRequest> webhook(@NotNull PosVendorWebhookRequest vendorRequest);
+    @Nonnull Optional<OrdersWebhookRequest> webhook(@Nonnull PosVendorWebhookRequest vendorRequest);
 }
