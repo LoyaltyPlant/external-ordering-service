@@ -81,7 +81,8 @@ public class PosIntegrationControllerV2 {
                     .stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue() ? HEALTH_UP : HEALTH_DOWN));
 
-            overallHealth.putAll(status.getServices());
+            Optional.ofNullable(status.getServices())
+                    .ifPresent(overallHealth::putAll);
 
             return ResponseEntity.ok(new HealthcheckResponse(overallHealth));
         } else {
