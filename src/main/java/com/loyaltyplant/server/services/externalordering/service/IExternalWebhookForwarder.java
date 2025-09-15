@@ -9,9 +9,8 @@ import jakarta.annotation.Nonnull;
  * to the appropriate endpoints with proper authentication and error handling.
  */
 public interface IExternalWebhookForwarder {
-
     /**
-     * Forwards an order status update to the external system.
+     * Forwards an order status update to the LP backend.
      *
      * @param salesOutletId The unique identifier of the sales outlet associated with the order.
      *                      Must not be null.
