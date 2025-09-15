@@ -30,16 +30,15 @@ import static com.loyaltyplant.server.services.externalordering.utils.Consts.HEA
 
 @Service
 public class PosMockService implements IExternalPosConvertingService {
-    private final Meter.MeterProvider<Counter> createdOrdersCounter;
+    private final Meter.MeterProvider<Counter> menuHitCounter;
 
     @Autowired
     public PosMockService(final MeterRegistry registry) {
         // example of metric exported to prometheus
-        this.createdOrdersCounter = Counter.builder("external_order_service_created_orders")
-                .description("Created orders counter.")
+        this.menuHitCounter = Counter.builder("external_order_service_menu_hit")
+                .description("Menu requests counter.")
                 .withRegistry(registry);
     }
-
 
     @Override
     public @Nonnull Optional<HealthcheckResponse> healthcheck(final @Nonnull Integer salesOutletId) {
@@ -86,7 +85,6 @@ public class PosMockService implements IExternalPosConvertingService {
         Objects.requireNonNull(request, "request is required");
 
         final String generatedPosId = "POS-" + UUID.randomUUID();
-        this.createdOrdersCounter.withTag("kind", "success").increment();
 
         return Optional.of(new CreatePosOrderResponse(generatedPosId));
     }
@@ -234,6 +232,8 @@ public class PosMockService implements IExternalPosConvertingService {
                                 .build()
                 ))
                 .build();
+
+        this.menuHitCounter.withTag("kind", "success").increment();
 
         return Optional.of(MenuAggregatorV2.builder()
                 .categories(List.of(

@@ -1,6 +1,7 @@
 package com.loyaltyplant.server.services.externalordering.helper;
 
 import com.loyaltyplant.oss.plantsql.SQLTemplateFactory;
+import com.loyaltyplant.server.commons.healthcheck.HealthChecks;
 import com.loyaltyplant.server.services.externalordering.service.IExternalPosConvertingService;
 import com.loyaltyplant.server.services.externalordering.service.IExternalWebhookForwarder;
 import com.loyaltyplant.server.services.externalordering.service.ITokenValidationService;
@@ -38,5 +39,11 @@ public class TestsConfiguration {
     @Primary
     public IExternalWebhookForwarder externalWebhookForwarder(final ITokenValidationService tokenValidationService) {
         return new WebhookForwarder(Mockito.mock(RestTemplate.class), tokenValidationService, "https://example.com");
+    }
+
+    @Bean
+    @Primary
+    public HealthChecks healthChecks() {
+        return Mockito.mock(HealthChecks.class);
     }
 }
