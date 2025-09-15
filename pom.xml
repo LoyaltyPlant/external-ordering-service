@@ -20,11 +20,14 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
+        <lpserver.commons.version>2.2.43</lpserver.commons.version>
         <swagger.version>2.6.0</swagger.version>
         <git.commit.id.version>9.0.1</git.commit.id.version>
         <IntegrationCommon.version>1.6.10</IntegrationCommon.version>
+
         <dockerfile.skip>false</dockerfile.skip>
         <dockerfile.imagename>external-ordering-service</dockerfile.imagename>
+
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

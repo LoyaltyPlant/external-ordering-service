@@ -7,6 +7,9 @@ import com.loyaltyplant.common.integration.protocol.digitalordering.response.Cre
 import com.loyaltyplant.common.integration.protocol.digitalordering.response.GetPosOrdersResponse;
 import com.loyaltyplant.common.integration.protocol.digitalordering.response.HealthcheckResponse;
 import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.OrdersWebhookRequest;
+import com.loyaltyplant.server.commons.healthcheck.HealthCheck;
+import com.loyaltyplant.server.commons.healthcheck.HealthCheckResult;
+import com.loyaltyplant.server.commons.healthcheck.HealthChecks;
 import com.loyaltyplant.server.services.externalordering.model.PosVendorWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.service.IExternalPosConvertingService;
 import com.loyaltyplant.server.services.externalordering.service.IExternalWebhookForwarder;
@@ -25,10 +28,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.loyaltyplant.server.services.externalordering.utils.Consts.AUTH_TOKEN_HEADER;
-import static com.loyaltyplant.server.services.externalordering.utils.Consts.SALES_OUTLET_HEADER;
+import static com.loyaltyplant.server.services.externalordering.utils.Consts.*;
 
 @RestController
 @RequestMapping("/api/v2")
@@ -37,14 +43,17 @@ public class PosIntegrationControllerV2 {
     private final IExternalPosConvertingService convertingService;
     private final ITokenValidationService tokenValidationService;
     private final IExternalWebhookForwarder forwarder;
+    private final HealthChecks systemHealthChecks;
 
     @Autowired
     public PosIntegrationControllerV2(final IExternalPosConvertingService convertingService,
                                       final ITokenValidationService tokenValidationService,
-                                      final IExternalWebhookForwarder forwarder) {
+                                      final IExternalWebhookForwarder forwarder,
+                                      final HealthChecks systemHealthChecks) {
         this.convertingService = convertingService;
         this.tokenValidationService = tokenValidationService;
         this.forwarder = forwarder;
+        this.systemHealthChecks = systemHealthChecks;
     }
 
     @GetMapping("/healthcheck")
@@ -61,9 +70,23 @@ public class PosIntegrationControllerV2 {
             @ApiResponse(responseCode = "503", description = "Service is unavailable")
     })
     public ResponseEntity<HealthcheckResponse> healthcheck(final @RequestHeader(SALES_OUTLET_HEADER) Integer salesOutletId) {
-        final Optional<HealthcheckResponse> status = convertingService.healthcheck(salesOutletId);
-        return status.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
+        final Optional<HealthcheckResponse> statusRaw = convertingService.healthcheck(salesOutletId);
+
+        if (statusRaw.isPresent()) {
+            final HealthcheckResponse status = statusRaw.get();
+
+            // append system health checks
+            final Map<String, String> overallHealth = Optional.ofNullable(systemHealthChecks.getLastCheckResults())
+                    .map(Map::entrySet).orElseGet(HashSet::new)
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, v -> v.getValue() ? HEALTH_UP : HEALTH_DOWN));
+
+            overallHealth.putAll(status.getServices());
+
+            return ResponseEntity.ok(new HealthcheckResponse(overallHealth));
+        } else {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        }
     }
 
     @PostMapping(path = "/orders", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

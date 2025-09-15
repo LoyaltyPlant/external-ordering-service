@@ -15,15 +15,31 @@ import com.loyaltyplant.common.integration.protocol.digitalordering.response.Hea
 import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.OrdersWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.model.PosVendorWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.service.IExternalPosConvertingService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.loyaltyplant.server.services.externalordering.utils.Consts.HEALTH_UP;
+
 @Service
 public class PosMockService implements IExternalPosConvertingService {
+    private final Meter.MeterProvider<Counter> createdOrdersCounter;
+
+    @Autowired
+    public PosMockService(final MeterRegistry registry) {
+        // example of metric exported to prometheus
+        this.createdOrdersCounter = Counter.builder("external_order_service_created_orders")
+                .description("Created orders counter.")
+                .withRegistry(registry);
+    }
+
 
     @Override
     @NotNull
@@ -32,9 +48,9 @@ public class PosMockService implements IExternalPosConvertingService {
 
         final HealthcheckResponse resp = new HealthcheckResponse();
         resp.setServices(Map.of(
-                "POS", "UP",
-                "DB", "UP",
-                "pos-" + salesOutletId, "UP"
+                "POS", HEALTH_UP,
+                "DB", HEALTH_UP,
+                "pos-" + salesOutletId, HEALTH_UP
         ));
         return Optional.of(resp);
     }
@@ -73,6 +89,8 @@ public class PosMockService implements IExternalPosConvertingService {
         Objects.requireNonNull(request, "request is required");
 
         final String generatedPosId = "POS-" + UUID.randomUUID();
+        this.createdOrdersCounter.withTag("kind", "success").increment();
+
         return Optional.of(new CreatePosOrderResponse(generatedPosId));
     }
 

@@ -7,6 +7,7 @@ import com.loyaltyplant.server.services.externalordering.service.ITokenValidatio
 import com.loyaltyplant.server.services.externalordering.service.impl.PosMockService;
 import com.loyaltyplant.server.services.externalordering.service.impl.TokenValidationMockService;
 import com.loyaltyplant.server.services.externalordering.service.impl.WebhookForwarder;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +31,7 @@ public class TestsConfiguration {
     @Bean
     @Primary
     public IExternalPosConvertingService externalPosConvertingService() {
-        return new PosMockService();
+        return new PosMockService(Mockito.mock(MeterRegistry.class));
     }
 
     @Bean
