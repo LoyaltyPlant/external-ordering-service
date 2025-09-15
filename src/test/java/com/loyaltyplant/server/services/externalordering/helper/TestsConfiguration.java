@@ -10,27 +10,32 @@ import com.loyaltyplant.server.services.externalordering.service.impl.WebhookFor
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 @TestConfiguration
 public class TestsConfiguration {
     @Bean(value = {"psql"})
+    @Primary
     public SQLTemplateFactory sqlTemplateFactory() {
         return Mockito.mock(SQLTemplateFactory.class);
     }
 
     @Bean
+    @Primary
     public ITokenValidationService tokenValidationService() {
         return new TokenValidationMockService();
     }
 
     @Bean
+    @Primary
     public IExternalPosConvertingService externalPosConvertingService() {
         return new PosMockService();
     }
 
     @Bean
+    @Primary
     public IExternalWebhookForwarder externalWebhookForwarder(final ITokenValidationService tokenValidationService) {
-        return new WebhookForwarder(Mockito.mock(RestTemplate.class), tokenValidationService, "");
+        return new WebhookForwarder(Mockito.mock(RestTemplate.class), tokenValidationService, "https://example.com");
     }
 }

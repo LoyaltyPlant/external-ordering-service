@@ -54,7 +54,7 @@ public class WebhookForwarder implements IExternalWebhookForwarder {
         try {
             final ResponseEntity<Void> response = restTemplate.exchange(lpWebhookUrl, HttpMethod.POST, entity, Void.class);
 
-            if (response.getStatusCode().is2xxSuccessful()) {
+            if (!response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.error("Failed to forward webhook to LP");
                 return false;
             } else {
