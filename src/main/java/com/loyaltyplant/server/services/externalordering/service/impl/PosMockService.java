@@ -16,12 +16,13 @@ import com.loyaltyplant.common.integration.protocol.digitalordering.webhook.Orde
 import com.loyaltyplant.server.services.externalordering.model.PosVendorWebhookRequest;
 import com.loyaltyplant.server.services.externalordering.service.IExternalPosConvertingService;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.Nonnull;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -29,15 +30,16 @@ import java.util.*;
 import static com.loyaltyplant.server.services.externalordering.utils.Consts.HEALTH_UP;
 
 @Service
+@Log4j2
 public class PosMockService implements IExternalPosConvertingService {
-    private final Meter.MeterProvider<Counter> menuHitCounter;
+    private final Counter menuHitCounter;
 
     @Autowired
     public PosMockService(final MeterRegistry registry) {
         // example of metric exported to prometheus
         this.menuHitCounter = Counter.builder("external_order_service_menu_hit")
                 .description("Menu requests counter.")
-                .withRegistry(registry);
+                .register(registry);
     }
 
     @Override
@@ -62,6 +64,11 @@ public class PosMockService implements IExternalPosConvertingService {
 
         if (!CollectionUtils.isEmpty(request.getOrderPosIds())) {
             for (String orderPosId : request.getOrderPosIds()) {
+                if (!StringUtils.hasText(orderPosId)) {
+                    LOGGER.error("SO: {} Empty orderPosId", salesOutletId);
+                    continue;
+                }
+
                 final Order order = Order.builder()
                         .id(orderPosId)
                         .state(OrderState.builder()
@@ -233,7 +240,7 @@ public class PosMockService implements IExternalPosConvertingService {
                 ))
                 .build();
 
-        this.menuHitCounter.withTag("kind", "success").increment();
+        this.menuHitCounter.increment();
 
         return Optional.of(MenuAggregatorV2.builder()
                 .categories(List.of(

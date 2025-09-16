@@ -37,7 +37,6 @@ import static com.loyaltyplant.server.services.externalordering.utils.Consts.WEB
         @ComponentScan(basePackages = "com.loyaltyplant.server.services.externalordering.repository")
 })
 public class RootConfiguration {
-
     @Bean
     public com.loyaltyplant.server.commons.utils.version.VersionInfo versionInfo() {
         return VersionInfo.INSTANCE;

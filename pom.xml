@@ -20,7 +20,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <lpserver.commons.version>2.2.43</lpserver.commons.version>
+        <lpserver.commons.version>2.2.44</lpserver.commons.version>
         <swagger.version>2.6.0</swagger.version>
         <git.commit.id.version>9.0.1</git.commit.id.version>
         <IntegrationCommon.version>1.6.10</IntegrationCommon.version>

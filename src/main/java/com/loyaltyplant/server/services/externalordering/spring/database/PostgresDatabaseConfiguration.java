@@ -4,6 +4,8 @@ import com.loyaltyplant.oss.plantsql.SQLTemplateFactory;
 import com.loyaltyplant.oss.plantsql.SQLTemplateFactoryBuilder;
 import com.loyaltyplant.server.commons.db.datasource.config.DataSourceConfigurationSupport;
 import com.loyaltyplant.server.commons.db.datasource.config.DataSourceProperties;
+import com.loyaltyplant.server.commons.healthcheck.DatabaseHealthCheck;
+import com.loyaltyplant.server.commons.healthcheck.HealthCheck;
 import com.loyaltyplant.server.commons.properties.PropertiesLocationPatterns;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -46,5 +48,10 @@ class PostgresDatabaseConfiguration extends DataSourceConfigurationSupport {
     @Bean
     public PropertiesLocationPatterns extraPropertiesLocationPatternsForDb() {
         return PropertiesLocationPatterns.inDefaultLayout("database.properties");
+    }
+
+    @Bean
+    public HealthCheck databaseHealthCheck(final @Qualifier("pgDatasource") DataSource dataSource) {
+        return new DatabaseHealthCheck(DS_NAME, dataSource);
     }
 }
